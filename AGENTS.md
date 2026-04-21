@@ -45,6 +45,7 @@ Non-negotiable. No exceptions.
 14. **Interrupts must be explicit.** If a new issue or concern must preempt current work, update `plan.md` first with an interrupt entry that identifies the paused step and where work should resume.
 15. **Split broad steps.** If a step requires multiple independent validations, split it into separate steps before continuing.
 16. **Re-plan on growth.** If a step expands materially during execution, update `plan.md` before continuing.
+17. **Report self-directed choices.** After each completed step or interrupt, report any assumptions made or decisions taken without user input.
 
 ---
 
@@ -258,6 +259,7 @@ Complete after every action before the next step:
 - [ ] `context.md` File Map updated if files were created, deleted, moved, or refactored
 - [ ] `issues.md` updated if any issue, blocker, regression, or missed instruction was noted
 - [ ] `lessons-learned.md` updated for every issue entry
+- [ ] User-facing update for any completed step or interrupt includes assumptions or decisions made without user input
 - [ ] `requirements.md` updated only if explicitly requested by user
 - [ ] `scratch.md` has current session notes
 

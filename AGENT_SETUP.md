@@ -82,6 +82,7 @@ The initial `.agent/` read is a startup step, not a stopping point.
 - If the plan has open step items and the user request is actionable, continue with the next incomplete step after the read.
 - Split a step if it requires multiple independent validations.
 - If a step expands materially during execution, update `plan.md` before continuing.
+- After each completed step or interrupt, report any assumptions made or decisions taken without user input.
 - Do not wait for a second prompt just because startup or summary is complete.
 - Stop after startup only when the user asked for status, planning, brainstorming, or clarification.
 
