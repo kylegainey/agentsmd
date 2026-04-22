@@ -6,9 +6,9 @@ This repo uses a structured agent memory system. Agents store project state in `
 
 ## How It Works
 
-The agent reads `.agent/` at the start of every session and writes to it as it works. `issues.md` and `lessons-learned.md` are part of that active context, so missed details and their lessons carry forward. Commit these files like any other code. Any agent or human picking up the project later has full context without reading the whole codebase.
+The agent uses `.agent/` as persistent memory and writes to it as it works. It should keep a tiny hot-path working set for normal turns: `core.md` for invariant workflow rules and `current.md` for live state. At session start or after a long interruption, it should also re-read `plan.md`, `issues.md`, and `lessons-learned.md`. Commit these files like any other code. Any agent or human picking up the project later has full context without reading the whole codebase.
 
-The instruction file is `agents.md` at the repo root, or wherever your agent framework expects it. See [Platform Notes](#platform-notes).
+The canonical instruction file is `AGENTS.md` at the repo root. If your agent framework expects a different filename, mirror or reference `AGENTS.md` rather than maintaining multiple divergent copies. See [Platform Notes](#platform-notes).
 
 ---
 
@@ -16,6 +16,8 @@ The instruction file is `agents.md` at the repo root, or wherever your agent fra
 
 | File | Purpose | Who Edits |
 |---|---|---|
+| `core.md` | Tiny operating loop re-read every working turn. | Agent (initialize), human (tighten if desired) |
+| `current.md` | Live state snapshot for resume and next action. | Agent |
 | `requirements.md` | What must be built. Frozen after planning. | Human (initial), agent (requirements stage only) |
 | `plan.md` | Step-by-step work plan with acceptance criteria. | Agent (before every work session) |
 | `changelog.md` | Append-only record of every change. | Agent |
@@ -36,6 +38,43 @@ Milestone archives land in `.agent/archive/` automatically.
 
 ---
 
+## Hot-Path Control Files
+
+Use two tiny files to keep the agent on the rails without reloading the full memory every turn.
+
+`core.md` is the invariant operating loop. Keep it to one screen and change it rarely.
+
+```markdown
+# Core Loop
+
+1. Resolve the oldest open interrupt first.
+2. Otherwise resume the next incomplete plan step.
+3. Before editing, name the active step and acceptance criteria.
+4. If pausing, add an interrupt with `Pauses:` and `Resume From:`.
+5. Log issues immediately and update lessons immediately after.
+6. Do not mark work complete until acceptance is verified.
+7. Update required records before moving on.
+8. Stop and surface conflicts or ambiguity.
+```
+
+`current.md` is the live working set. Keep it short and update it whenever the active step, interrupt, or next action changes.
+
+```markdown
+# Current State
+
+**Active Requirement:** R-01
+**Active Step:** Step 1 [R-01]
+**Acceptance:** <what must be true before this step can close>
+**Open Interrupt:** none | Interrupt 1 [R-NN]
+**Resume From:** <exact sub-task or checkpoint>
+**Next Action:** <immediate next thing to do>
+**Key Constraints:** <critical reminders only>
+```
+
+This split keeps every-turn rereads small while preserving the deeper audit trail elsewhere in `.agent/`.
+
+---
+
 ## Tracking Issues and Lessons
 
 Any issue, regression, blocker, or missed instruction should be recorded in `issues.md` before moving on.
@@ -45,15 +84,15 @@ Any issue, regression, blocker, or missed instruction should be recorded in `iss
 - State the specific detail, assumption, or check that was missed.
 - After logging the issue, update `lessons-learned.md` by adding a new lesson or revising the closest existing one.
 
-`lessons-learned.md` should be read at the start of each session alongside `plan.md`, `changelog.md`, and `issues.md`.
+`lessons-learned.md` should be read at the start of each session alongside `core.md`, `current.md`, `plan.md`, and `issues.md`.
 
 ---
 
 ## Starting a New Project
 
-1. Copy `agents.md` to your repo root (or configure your agent platform to reference it).
+1. Put `AGENTS.md` at your repo root (or configure your agent platform to reference it as the canonical source).
 2. Tell the agent: *"Initialize the project memory and gather requirements."*
-3. The agent will create `.agent/` scaffolding, including `issues.md` and `lessons-learned.md`, and start asking questions.
+3. The agent will create `.agent/` scaffolding, including `core.md`, `current.md`, `issues.md`, and `lessons-learned.md`, and start asking questions.
 4. Review `requirements.md` when done. This is your last easy edit — it freezes once planning starts.
 5. Tell the agent: *"Create the plan."*
 6. Review `plan.md`. Add or adjust steps if needed before giving the green light.
@@ -67,7 +106,7 @@ Commit `.agent/` after initialization.
 
 1. Open your agent session.
 2. Tell the agent: *"Read the project memory and tell me where we are."*
-3. The agent will summarize current status from `plan.md`, `changelog.md`, `issues.md`, and `lessons-learned.md`.
+3. The agent will summarize current status from `current.md`, `plan.md`, `issues.md`, and `lessons-learned.md`, consulting `changelog.md` only if recent history matters.
 4. If the user is asking for execution, the agent should continue with the next incomplete interrupt or plan step in the same session. If the user asked only for status or planning, it should stop after the summary.
 
 No additional setup needed — all context is in `.agent/`.
@@ -76,12 +115,13 @@ No additional setup needed — all context is in `.agent/`.
 
 ## Continuing Work in a Session
 
-The initial `.agent/` read is a startup step, not a stopping point.
+The initial `.agent/` read is a startup step, not a stopping point. On ordinary working turns, the hot-path reread should stay small: `core.md` and `current.md`. Re-read `plan.md`, `issues.md`, and `lessons-learned.md` at session start, handoff, or after a long interruption.
 
 - If the plan has open interrupt items, address the oldest open interrupt before normal plan steps.
 - If the plan has open step items and the user request is actionable, continue with the next incomplete step after the read.
 - Split a step if it requires multiple independent validations.
 - If a step expands materially during execution, update `plan.md` before continuing.
+- Keep `current.md` synchronized with the active step, acceptance target, interrupt status, resume point, and next action.
 - After each completed step or interrupt, report any assumptions made or decisions taken without user input.
 - Do not wait for a second prompt just because startup or summary is complete.
 - Stop after startup only when the user asked for status, planning, brainstorming, or clarification.
@@ -94,6 +134,8 @@ If a new issue or concern needs immediate attention mid-work, the agent should u
 
 - Add an entry under `## Interrupts` in `plan.md`.
 - Record which step is being paused in a `**Pauses:** Step <N> [R-NN]` line.
+- Record the exact place to resume in a `**Resume From:**` line, ideally naming the next unchecked sub-task or checkpoint.
+- Mirror the interrupt, resume point, and immediate next action in `current.md`.
 - If the interrupt came from an issue, regression, blocker, or missed instruction, log it in `issues.md` and update `lessons-learned.md` before moving on.
 - Complete the interrupt using normal acceptance criteria.
 - When the interrupt is complete, resume the paused step automatically before continuing with later plan steps.
@@ -153,13 +195,13 @@ You do not need to do anything. Check `.agent/milestones.md` for a human-readabl
 ## Platform Notes
 
 ### Claude Code
-Place `agents.md` at the repo root as `CLAUDE.md`, or reference it with `@agents.md`. Use `@.agent/<file>` to load specific memory files explicitly.
+Keep `AGENTS.md` as the canonical source at the repo root. If you also use `CLAUDE.md`, mirror `AGENTS.md` into it or reference `@AGENTS.md`. Use `@.agent/<file>` to load specific memory files explicitly.
 
 ### Cursor
-Place `agents.md` content in `.cursor/rules` or reference as `@agents.md` depending on your Cursor version.
+Keep `AGENTS.md` as the canonical source, then reference `@AGENTS.md` or mirror its content into `.cursor/rules` depending on your Cursor version.
 
 ### Other agents
-Point the agent at `agents.md` as its system instruction source. Instruct it to read `.agent/` at session start.
+Point the agent at `AGENTS.md` as its system instruction source. Instruct it to read `.agent/` at session start.
 
 ---
 
@@ -178,4 +220,4 @@ Keep `archive/` committed. It's your long-term audit trail.
 
 ## Estimated Context Cost
 
-At steady state, `.agent/` adds roughly 3,000–8,000 tokens per session. On a 200K context model, this is under 5%. The main growth vector is `changelog.md`; rotate it when it exceeds ~200 rows to keep costs stable.
+At steady state, the hot-path reread (`core.md` + `current.md`) should stay well under 500 tokens. The broader startup read adds `plan.md`, `issues.md`, and `lessons-learned.md`; `changelog.md` should not be part of the normal turn-by-turn reread. The main growth vector remains `changelog.md`, so rotate it when it exceeds ~200 rows to keep costs stable.

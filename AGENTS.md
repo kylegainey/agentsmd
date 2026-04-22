@@ -6,6 +6,8 @@ All project state lives in `.agent/` at the repository root and is committed to 
 
 ```
 .agent/
+├── core.md          # tiny operating loop — re-read every working turn
+├── current.md       # live state: active step, acceptance, interrupt, next action
 ├── requirements.md   # what must be built — frozen after planning
 ├── plan.md           # how we're building it — written before any work
 ├── changelog.md      # what changed and why — append only
@@ -31,25 +33,71 @@ Non-negotiable. No exceptions.
 
 1. **No work without a plan.** If `plan.md` has no unchecked `[ ]` items, stop. Create or update the plan first.
 2. **Update records at every step.** Complete the update checklist before the next step.
-3. **Re-read before acting.** At the start of each working turn, re-read `plan.md`, `changelog.md`, `issues.md`, and `lessons-learned.md`. Do not rely on in-context summaries.
+3. **Re-read before acting.** At the start of each working turn, re-read only `core.md` and `current.md`. At session start or after a long interruption, also re-read `plan.md`, `issues.md`, and `lessons-learned.md`. Load `changelog.md`, `decisions.md`, `context.md`, and `requirements.md` only when needed. Do not rely on in-context summaries.
 4. **Conflict = stop.** If any two files contradict each other, surface the conflict to the user. Do not resolve it unilaterally.
 5. **Requirements freeze at planning.** Do not edit `requirements.md` after planning begins unless the user explicitly requests it.
 6. **Changelog is append-only.** Never edit or delete existing entries.
 7. **Conventions are human-managed.** Do not write to `conventions.md` without explicit user instruction.
-8. **Keep `context.md` current.** Update the file map before the next step whenever a file is created, deleted, moved, or significantly refactored. A stale map is worse than none.
-9. **Log issues immediately.** Any issue, regression, blocker, or missed instruction must be recorded in `issues.md` and linked to a specific plan step before moving on.
-10. **Capture the miss clearly.** Every issue entry must record whether the miss was `llm`- or `user`-related and what detail was missed.
-11. **Update lessons immediately.** After logging an issue, update `lessons-learned.md` by adding a new lesson or revising the closest existing one.
-12. **Verify acceptance before closing a step.** Confirm acceptance criteria are met before marking any step `[x]`.
-13. **Resume work after startup.** Once session-start reads are complete, continue with the next incomplete interrupt or plan step unless the user asked only for status, planning, or clarification.
-14. **Interrupts must be explicit.** If a new issue or concern must preempt current work, update `plan.md` first with an interrupt entry that identifies the paused step and where work should resume.
-15. **Split broad steps.** If a step requires multiple independent validations, split it into separate steps before continuing.
-16. **Re-plan on growth.** If a step expands materially during execution, update `plan.md` before continuing.
-17. **Report self-directed choices.** After each completed step or interrupt, report any assumptions made or decisions taken without user input.
+8. **Keep `current.md` current.** Update the active step, acceptance target, open interrupt, resume point, next action, and critical constraints whenever they change materially.
+9. **Keep `context.md` current.** Update the file map before the next step whenever a file is created, deleted, moved, or significantly refactored. A stale map is worse than none.
+10. **Log issues immediately.** Any issue, regression, blocker, or missed instruction must be recorded in `issues.md` and linked to a specific plan step before moving on.
+11. **Capture the miss clearly.** Every issue entry must record whether the miss was `llm`- or `user`-related and what detail was missed.
+12. **Update lessons immediately.** After logging an issue, update `lessons-learned.md` by adding a new lesson or revising the closest existing one.
+13. **Verify acceptance before closing a step.** Confirm acceptance criteria are met before marking any step `[x]`.
+14. **Resume work after startup.** Once session-start reads are complete, continue with the next incomplete interrupt or plan step unless the user asked only for status, planning, or clarification.
+15. **Interrupts must be explicit.** If a new issue or concern must preempt current work, update `plan.md` first with an interrupt entry that identifies the paused step and where work should resume.
+16. **Split broad steps.** If a step requires multiple independent validations, split it into separate steps before continuing.
+17. **Re-plan on growth.** If a step expands materially during execution, update `plan.md` before continuing.
+18. **Report self-directed choices.** After each completed step or interrupt, report any assumptions made or decisions taken without user input.
 
 ---
 
 ## File Definitions
+
+### `core.md`
+
+Tiny hot-path operating loop. Re-read it at the start of every working turn. Keep it to one screen and trim it aggressively when it starts to grow.
+
+```markdown
+# Core Loop
+
+1. Resolve the oldest open interrupt first.
+2. Otherwise resume the next incomplete plan step.
+3. Before editing, name the active step and acceptance criteria.
+4. If pausing, add an interrupt with `Pauses:` and `Resume From:`.
+5. Log issues immediately and update lessons immediately after.
+6. Do not mark work complete until acceptance is verified.
+7. Update required records before moving on.
+8. Stop and surface conflicts or ambiguity.
+```
+
+- Keep this file stable. It is for workflow guardrails, not project history.
+- Prefer fewer than 12 lines or 200 words.
+- If an instruction is not needed every turn, it does not belong here.
+
+---
+
+### `current.md`
+
+Live working set for the current turn. Re-read it at the start of every working turn and update it whenever the active step or immediate next action changes.
+
+```markdown
+# Current State
+
+**Active Requirement:** R-01
+**Active Step:** Step 1 [R-01]
+**Acceptance:** <What must be true before this step can close>
+**Open Interrupt:** none | Interrupt 1 [R-NN]
+**Resume From:** <Exact sub-task or checkpoint>
+**Next Action:** <Immediate next thing to do>
+**Key Constraints:** <Critical reminders only>
+```
+
+- `current.md` must agree with `plan.md`. If they differ, fix the mismatch or surface it before continuing.
+- Keep only live state here. Do not copy long history from `changelog.md` or `decisions.md`.
+- Keep it compact enough to skim in a few seconds.
+
+---
 
 ### `requirements.md`
 
@@ -81,6 +129,7 @@ MILESTONE: <name or number>
 
 ### Interrupt 1: <Title> [R-NN]
 **Pauses:** Step <N> [R-NN]
+**Resume From:** <Exact sub-task or checkpoint to resume after the interrupt>
 - [ ] Sub-task
 
 **Acceptance:** <Specific, verifiable condition confirming this interrupt is done.>
@@ -94,7 +143,7 @@ MILESTONE: <name or number>
 - Each step references requirements via `R-NN`.
 - Use the `## Interrupts` section only when preemptive work is required; otherwise omit it.
 - Use `### Interrupt N: <Title> [R-NN]` entries under `## Interrupts`.
-- Interrupt entries must identify the paused step and reference the relevant requirement via `R-NN`.
+- Interrupt entries must identify the paused step, the exact resume point, and reference the relevant requirement via `R-NN`.
 - Resolve open interrupts in listed order before resuming normal plan steps.
 - Leave the paused step incomplete; once the interrupt is complete, resume that paused step before later work.
 - Split a step if it requires multiple independent validations.
@@ -234,7 +283,7 @@ Durable lessons from issues. This file is read every session so mistakes do not 
 
 - Update this file every time an issue is logged. Add a new lesson or revise an existing one to capture the reusable takeaway.
 - Prefer revising an existing lesson over adding a near-duplicate.
-- Re-read it after logging a new issue and at the start of every working turn.
+- Re-read it after logging a new issue and at the start of each session or handoff.
 
 ---
 
@@ -254,6 +303,7 @@ Session-scoped working notes. Not authoritative. Clear or archive them at the st
 Complete after every action before the next step:
 
 - [ ] `plan.md` step and interrupt status current; acceptance criteria verified before any `[x]`
+- [ ] `current.md` active step, acceptance target, interrupt status, and next action current
 - [ ] `changelog.md` new entry appended
 - [ ] `decisions.md` updated if a non-obvious choice was made
 - [ ] `context.md` File Map updated if files were created, deleted, moved, or refactored
@@ -278,11 +328,12 @@ When `plan.md` reaches `STATUS: complete`:
 
 ## Initialization
 
-1. Check if `.agent/` exists. If not, create empty scaffolding for all active files.
-2. Read all active `.agent/` files before acting.
-3. At the start of every working turn: re-read `plan.md`, `changelog.md`, `issues.md`, and `lessons-learned.md`.
-4. If `plan.md` has no `[ ]` items — stop and ask the user what to do next.
-5. If `requirements.md` is empty — gather requirements before planning.
-6. If files contradict or anything is ambiguous — surface it, do not guess.
-7. If `plan.md` has open interrupt items, resolve the oldest open interrupt first.
-8. If `plan.md` has open step items and the user is asking for execution, resume the next incomplete step in the same session.
+1. Check if `.agent/` exists. If not, create empty scaffolding for all active files, including `core.md` and `current.md`.
+2. If `.agent/` exists but `core.md` or `current.md` is missing, create it before proceeding.
+3. At session start, read `core.md`, `current.md`, `plan.md`, `issues.md`, and `lessons-learned.md` before acting.
+4. At the start of every working turn: re-read `core.md` and `current.md`.
+5. If `plan.md` has no `[ ]` items — stop and ask the user what to do next.
+6. If `requirements.md` is empty — gather requirements before planning.
+7. If files contradict or anything is ambiguous — surface it, do not guess.
+8. If `plan.md` has open interrupt items, resolve the oldest open interrupt first.
+9. If `plan.md` has open step items and the user is asking for execution, resume the next incomplete step in the same session.
