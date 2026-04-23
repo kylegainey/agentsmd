@@ -5,7 +5,7 @@ operating memory is under `.agent/`.
 
 ## Required files
 
-- `AGENTS.md`: template for copying into other projects.
+- `AGENTS.md`: copy template for seeding new project roots.
 - `core.md`: 9-step hot loop.
 - `current.md`: live turn state.
 - `requirements.md`, `plan.md`: requirements and execution plan.
@@ -18,22 +18,22 @@ Copy `.agent/AGENTS.md` to another project's root as `AGENTS.md` when seeding it
 
 ## Deployment package
 
-This repo also keeps the full reusable package in `copy-to-project/`:
+This repo also keeps the full reusable package in `agent-files/`:
 
-- `copy-to-project/AGENTS.md`
-- `copy-to-project/.agent/`
+- `agent-files/AGENTS.md`
+- `agent-files/.agent/`
 
 Use the package command from this repo root when bootstrapping another project:
 
 ```bash
-cp copy-to-project/AGENTS.md <new-repo>/AGENTS.md
-cp -R copy-to-project/.agent/. <new-repo>/.agent/
+cp agent-files/AGENTS.md <new-repo>/AGENTS.md
+cp -R agent-files/.agent/. <new-repo>/.agent/
 ```
 
 or run:
 
 ```bash
-copy-to-project/bootstrap.sh <new-repo>
+./bootstrap.sh <new-repo>
 ```
 
 ## Bootstrap rule

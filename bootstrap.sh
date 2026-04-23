@@ -7,7 +7,7 @@ usage() {
   cat <<'EOF'
 Usage: bootstrap.sh [--dry-run] [<target-dir>]
 
-Copies the template root AGENTS.md and .agent skeleton into <target-dir>.
+Copies the template AGENTS.md and .agent skeleton into <target-dir>.
 
 Options:
   --dry-run   Show copy decisions without writing files.
@@ -39,7 +39,8 @@ done
 DEST_DIR="${DEST_DIR:-.}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TEMPLATE_DIR="$SCRIPT_DIR/.agent"
+PACKAGE_DIR="$SCRIPT_DIR/agent-files"
+TEMPLATE_DIR="$PACKAGE_DIR/.agent"
 DEST_AGENT_DIR="$DEST_DIR/.agent"
 
 overwrite_allowed=(
@@ -117,7 +118,7 @@ while IFS= read -r -d '' src_file; do
   copy_if_allowed "$src_file" "$DEST_AGENT_DIR/$rel_path" ".agent/$rel_path"
 done < <(find "$TEMPLATE_DIR" -type f -print0)
 
-copy_if_allowed "$SCRIPT_DIR/AGENTS.md" "$DEST_DIR/AGENTS.md" "AGENTS.md"
+copy_if_allowed "$PACKAGE_DIR/AGENTS.md" "$DEST_DIR/AGENTS.md" "AGENTS.md"
 
 if (( DRY_RUN )); then
   printf 'Dry-run complete for %s\n' "$DEST_DIR"

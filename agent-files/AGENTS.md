@@ -31,11 +31,11 @@ Copy this file to a project root as `AGENTS.md`.
 
 ## Bootstrap behavior
 
-- Copying `copy-to-project` into an existing repo should never overwrite project
+- Copying this package into an existing repo should never overwrite project
   tracking files like `current.md`, `requirements.md`, `plan.md`, `changelog.md`,
   `decisions.md`, `issues.md`, `lessons-learned.md`, `context.md`,
   `conventions.md`, or `scratch.md`.
 - Boilerplate files (for example `AGENTS.md` and `.agent/README.md`) may be
   replaced intentionally.
-- Use `copy-to-project/bootstrap.sh --dry-run <target>` to preview what will be
+- Use `./bootstrap.sh --dry-run <target>` to preview what will be
   copied before changing any files.
