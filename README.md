@@ -14,7 +14,7 @@
 - Run the root bootstrap script when seeding a target repository.
 
 ## Key Files
-- `bootstrap.sh`: copies `agent-files/AGENTS.md` and `agent-files/.agent/` into a target directory.
+- `bootstrap.sh`: copies `agent-files/AGENTS.md`, `agent-files/CLAUDE.md`, and `agent-files/.agent/` into a target directory.
 - `agent-files/README.md`: package usage notes and file behavior.
 - `.agent/README.md`: internal agent memory index for this repository.
 

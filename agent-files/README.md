@@ -3,6 +3,7 @@
 This folder is the portable project bootstrap package.
 
 - Copy `AGENTS.md` to the target repo root.
+- Copy `CLAUDE.md` to the target repo root when it does not already exist.
 - Copy `agent-files/.agent/` to the target repo root as `./.agent/`.
 - Files in this package are copied to the target directory.
 - Existing project tracking files are never overwritten.
@@ -15,6 +16,9 @@ mkdir -p <new-repo>/.agent
 cp agent-files/AGENTS.md <new-repo>/AGENTS.md
 cp -R agent-files/.agent/. <new-repo>/.agent/
 ```
+
+Use `./bootstrap.sh` when you also want to seed `CLAUDE.md` without
+overwriting an existing target file.
 
 Run:
 
@@ -37,10 +41,14 @@ Preview only:
 - `.agent/README.md`
 - `.agent/rotate_changelog.md`
 
+### Warn and keep existing
+
+- `CLAUDE.md`
+
 ### Dry run
 
 - `./bootstrap.sh --dry-run <target>` prints every decision with
-  `copy`, `overwrite`, and `skip` outcomes and performs no writes.
+  `copy`, `overwrite`, `warn`, and `skip` outcomes and performs no writes.
 
 ### Never overwritten
 

@@ -7,7 +7,7 @@ usage() {
   cat <<'EOF'
 Usage: bootstrap.sh [--dry-run] [<target-dir>]
 
-Copies the template AGENTS.md and .agent skeleton into <target-dir>.
+Copies the template AGENTS.md, CLAUDE.md, and .agent skeleton into <target-dir>.
 
 Options:
   --dry-run   Show copy decisions without writing files.
@@ -50,6 +50,10 @@ overwrite_allowed=(
   ".agent/rotate_changelog.md"
 )
 
+warn_if_exists=(
+  "CLAUDE.md"
+)
+
 track_files=(
   ".agent/current.md"
   ".agent/requirements.md"
@@ -81,6 +85,15 @@ copy_if_allowed() {
   if [[ -f "$dst" ]]; then
     if is_in_list "$rel" "${track_files[@]}"; then
       printf 'skip (tracking): %s\n' "$rel"
+      return 0
+    fi
+
+    if is_in_list "$rel" "${warn_if_exists[@]}"; then
+      if (( DRY_RUN )); then
+        printf 'warn (dry-run): %s exists, not overwritten\n' "$rel"
+      else
+        printf 'warn: %s exists, not overwritten\n' "$rel"
+      fi
       return 0
     fi
 
@@ -119,6 +132,7 @@ while IFS= read -r -d '' src_file; do
 done < <(find "$TEMPLATE_DIR" -type f -print0)
 
 copy_if_allowed "$PACKAGE_DIR/AGENTS.md" "$DEST_DIR/AGENTS.md" "AGENTS.md"
+copy_if_allowed "$PACKAGE_DIR/CLAUDE.md" "$DEST_DIR/CLAUDE.md" "CLAUDE.md"
 
 if (( DRY_RUN )); then
   printf 'Dry-run complete for %s\n' "$DEST_DIR"
