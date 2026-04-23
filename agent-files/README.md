@@ -1,36 +1,13 @@
-# Agent Files Template
+# Agent Workspace Package
 
-This folder is the portable project bootstrap package.
+This package seeds a project root with these files:
 
-- Copy `AGENTS.md` to the target repo root.
-- Copy `CLAUDE.md` to the target repo root when it does not already exist.
-- Copy `agent-files/.agent/` to the target repo root as `./.agent/`.
-- Files in this package are copied to the target directory.
-- Existing project tracking files are never overwritten.
-- Boilerplate files can be refreshed even if they already exist.
+- `AGENTS.md`
+- `CLAUDE.md`
+- `.agent/`
 
-## Quick start (new repo)
-
-```bash
-mkdir -p <new-repo>/.agent
-cp agent-files/AGENTS.md <new-repo>/AGENTS.md
-cp -R agent-files/.agent/. <new-repo>/.agent/
-```
-
-Use `./bootstrap.sh` when you also want to seed `CLAUDE.md` without
-overwriting an existing target file.
-
-Run:
-
-```bash
-./bootstrap.sh <new-repo>
-```
-
-Preview only:
-
-```bash
-./bootstrap.sh --dry-run <new-repo>
-```
+Use the accompanying bootstrap tooling or copy the files into the target
+project root manually.
 
 ## File behavior
 
@@ -45,11 +22,6 @@ Preview only:
 
 - `CLAUDE.md`
 
-### Dry run
-
-- `./bootstrap.sh --dry-run <target>` prints every decision with
-  `copy`, `overwrite`, `warn`, and `skip` outcomes and performs no writes.
-
 ### Never overwritten
 
 - `.agent/current.md`
@@ -62,3 +34,7 @@ Preview only:
 - `.agent/lessons-learned.md`
 - `.agent/conventions.md`
 - `.agent/scratch.md`
+
+## Source
+
+This package is maintained in the `project-setup` bootstrap repository.

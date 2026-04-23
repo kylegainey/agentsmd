@@ -1,6 +1,4 @@
-# AGENTS.md Template for New Projects
-
-Copy this file to a project root as `AGENTS.md`.
+# AGENTS.md
 
 ## Project Memory
 
@@ -25,17 +23,15 @@ Copy this file to a project root as `AGENTS.md`.
 
 ## Startup checks
 
-1. Read `core.md` and `current.md`.
-2. Read `plan.md`, `issues.md`, and `lessons-learned.md`.
-3. Start work only with at least one unchecked item in `plan.md`.
+1. Read `.agent/core.md` and `.agent/current.md`.
+2. Read `.agent/plan.md`, `.agent/issues.md`, and `.agent/lessons-learned.md`.
+3. Start work only with at least one unchecked item in `.agent/plan.md`.
 
-## Bootstrap behavior
+## File protection
 
-- Copying this package into an existing repo should never overwrite project
-  tracking files like `current.md`, `requirements.md`, `plan.md`, `changelog.md`,
-  `decisions.md`, `issues.md`, `lessons-learned.md`, `context.md`,
-  `conventions.md`, or `scratch.md`.
-- Boilerplate files (for example `AGENTS.md` and `.agent/README.md`) may be
-  replaced intentionally.
-- Use `./bootstrap.sh --dry-run <target>` to preview what will be
-  copied before changing any files.
+- Do not overwrite project tracking files like `.agent/current.md`,
+  `.agent/requirements.md`, `.agent/plan.md`, `.agent/changelog.md`,
+  `.agent/decisions.md`, `.agent/issues.md`, `.agent/lessons-learned.md`,
+  `.agent/context.md`, `.agent/conventions.md`, or `.agent/scratch.md`
+  unless explicitly instructed.
+- Keep history files append-only.
