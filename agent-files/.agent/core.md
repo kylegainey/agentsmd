@@ -1,5 +1,6 @@
 # Core Loop
 
+0. Proceeding to implementation is predicated on presenting the user your step-by-step plan and the user's acceptance.
 1. Resolve the oldest open interrupt.
 2. Otherwise resume the next incomplete plan step.
 3. Name the active step and acceptance before editing.
