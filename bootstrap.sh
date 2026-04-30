@@ -185,7 +185,10 @@ install_settings() {
     return 0
   fi
 
-  if jq -e '._agentHooks' "$DEST_SETTINGS" >/dev/null 2>&1; then
+  local missing
+  missing=$(jq --argjson exp "$(jq '._agentHooks' "$fragment")" \
+    '($exp - (._agentHooks // [])) | length' "$DEST_SETTINGS" 2>/dev/null || echo 1)
+  if [ "$missing" = "0" ]; then
     printf 'skip (hooks already installed): %s\n' "$rel"
     return 0
   fi

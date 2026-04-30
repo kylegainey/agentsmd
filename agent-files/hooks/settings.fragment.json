@@ -1,5 +1,5 @@
 {
-  "_agentHooks": ["changelog-append", "plan-gate", "inject-context"],
+  "_agentHooks": ["changelog-append", "plan-gate", "inject-context", "inject-project-map"],
   "hooks": {
     "PreToolUse": [
       {
@@ -14,6 +14,13 @@
       {
         "hooks": [
           {"type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/inject-context.sh"}
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {"type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/inject-project-map.sh"}
         ]
       }
     ]

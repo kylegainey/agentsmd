@@ -24,8 +24,9 @@
 ## Startup checks
 
 1. Read `.agent/core.md` and `.agent/current.md`.
-2. Read `.agent/plan.md`, `.agent/issues.md`, and `.agent/lessons-learned.md`.
-3. Start work only with at least one unchecked item in `.agent/plan.md`.
+2. Read `.agent/context.md` for the project file map, entry points, and Do Not Touch list. Use it to orient before opening unfamiliar files; if it looks stale, run `/sync-context`.
+3. Read `.agent/plan.md`, `.agent/issues.md`, and `.agent/lessons-learned.md`.
+4. Start work only with at least one unchecked item in `.agent/plan.md`.
 
 ## File protection
 

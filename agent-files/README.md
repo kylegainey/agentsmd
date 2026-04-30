@@ -58,6 +58,7 @@ parts of `AGENTS.md`. Scripts land in `<target>/.claude/hooks/`, and
 | `changelog-append.sh` | `PreToolUse(Write\|Edit)` | `.agent/changelog.md` is append-only | `AGENT_ALLOW_NONAPPEND=1` |
 | `plan-gate.sh` | `PreToolUse(Write\|Edit)` | edits outside `.agent/` require an unchecked `- [ ]` item in `.agent/plan.md` | `AGENT_BYPASS_PLAN_GATE=1` |
 | `inject-context.sh` | `UserPromptSubmit` | re-surfaces `.agent/core.md` and `.agent/current.md` each turn | n/a (additive only) |
+| `inject-project-map.sh` | `SessionStart` | surfaces `.agent/context.md` once per session (project file map, entry points, Do Not Touch) | n/a (additive only) |
 
 ### Install behavior
 
