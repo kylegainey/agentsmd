@@ -14,11 +14,11 @@
 
 ## Key Agent Files
 
-- `agent-files/AGENTS.md`: portable root template for new repos.
+- `agent-files/AGENTS.md`: portable root `AGENTS.md` template for new repos.
+- `agent-files/CLAUDE.md`: portable root `CLAUDE.md` template for new repos.
 - `agent-files/.agent/`: starter `.agent/` skeleton for new repos.
-- `agent-files/README.md`: deployment instructions for the template package.
+- `agent-files/README.md`: deployment instructions and per-file copy behavior.
 - `bootstrap.sh`: script to copy template files into a target root.
-- `.agent/AGENTS.md`: portable root `AGENTS.md` template for other projects.
 - `.agent/README.md`: bootstrap and file-index for this project.
 - `.agent/core.md`: compact workflow loop.
 - `.agent/current.md`: live step state.

@@ -1,0 +1,21 @@
+{
+  "_agentHooks": ["changelog-append", "plan-gate", "inject-context"],
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {"type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/changelog-append.sh"},
+          {"type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/plan-gate.sh"}
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {"type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/inject-context.sh"}
+        ]
+      }
+    ]
+  }
+}

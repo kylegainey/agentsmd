@@ -5,7 +5,6 @@ operating memory is under `.agent/`.
 
 ## Required files
 
-- `AGENTS.md`: copy template for seeding new project roots.
 - `core.md`: 9-step hot loop.
 - `current.md`: live turn state.
 - `requirements.md`, `plan.md`: requirements and execution plan.
@@ -14,27 +13,22 @@ operating memory is under `.agent/`.
 - `context.md`, `conventions.md`, `scratch.md`: map, standards, session notes.
 - `rotate_changelog.md`: maintenance helper when `changelog.md` grows.
 
-Copy `.agent/AGENTS.md` to another project's root as `AGENTS.md` when seeding it.
-
 ## Deployment package
 
-This repo also keeps the full reusable package in `agent-files/`:
+The reusable templates shipped to other repos live in `agent-files/`:
 
 - `agent-files/AGENTS.md`
+- `agent-files/CLAUDE.md`
 - `agent-files/.agent/`
 
-Use the package command from this repo root when bootstrapping another project:
+Seed a target project with the bootstrap script from this repo root:
 
 ```bash
-cp agent-files/AGENTS.md <new-repo>/AGENTS.md
-cp -R agent-files/.agent/. <new-repo>/.agent/
+./bootstrap.sh <target-dir>
+./bootstrap.sh --dry-run <target-dir>
 ```
 
-or run:
-
-```bash
-./bootstrap.sh <new-repo>
-```
+See `agent-files/README.md` for per-file overwrite, warn, and skip behavior.
 
 ## Bootstrap rule
 
